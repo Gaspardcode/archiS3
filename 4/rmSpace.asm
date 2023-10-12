@@ -20,4 +20,4 @@ RemoveSpace		movea  a0,a1
 \quit			move.b	d0,(a1)
 				rts
 
-S				dc.b	" 5 +  12 ",0
+S				dc.b	" 5     +     12    ",0
