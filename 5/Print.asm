@@ -3,8 +3,8 @@ vector_000		dc.l		$ffb500
 vector_001		dc.l		Main
 				org 		$500
 				
-Main			lea			S,a0
-				move.b		#24,d1
+Main			lea			T,a0
+				move.b		#24,d1 ;column ; max = 60
 				move.b		#20,d2
 				jsr			Print
 				illegal
@@ -22,3 +22,4 @@ Print			movem.l		d0/d1/d2/a0,-(a7)
 
 PrintChar		incbin		"PrintChar.bin"
 S				dc.b		"Test chain",0
+T				dc.b		"Long phrase meant to go out of the screen",0
