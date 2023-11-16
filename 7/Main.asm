@@ -1,11 +1,84 @@
-				org 			$4
-vector_001		dc.l			Main
-				org 			$550
+				org 	$0
+vector_000 		dc.l 	$ffb500
+vector_001 		dc.l	Main
+ 
+ 				org 	$500
+Main 			
+				clr.b 	d1
+				clr.b 	d2
+				move.l #60000,d3
+				move.l #8000,d4
 				
-Main			movea.l			#S1,a0
-				jsr				GetExpr
+				lea		P1,a0
+				jsr 	Print
+				add.l	#1,d2
+				
+				movea.l #sBuffer,a0
+				jsr 	GetInput
+				add.l	#1,d2
+				
+				move.l	a0,-(a7)
+				lea		P2,a0
+				jsr		Print
+				add.l	#1,d2
+				movea.l (a7)+,a0
+				jsr		GetExpr
+				jsr		Itoa
+				jsr		Print
+				
 				illegal
 				
+GetInput 		incbin "GetInput.bin"
+
+Print			movem.l		d0/d1/d2/a0,-(a7)
+
+\loop			move.b		(a0)+,d0
+				beq			\quit
+				addq		#1,d1
+				jsr			PrintChar
+				bra			\loop
+
+\quit			movem.l		(a7)+,d0/d1/d2/a0
+				rts
+
+PrintChar		incbin		"PrintChar.bin"
+
+Itoa			tst.l	d0
+				bmi		\negatif
+				;else
+				jsr		Uitoa
+				bra		\quit
+
+\negatif		move.b	#'-',(a0)+
+				muls.l	#-1,d0
+				jsr 	Uitoa
+				tst.b	-(a0)
+				bra		\quit
+
+\quit			rts
+
+Uitoa				movem.l			d0/a1/a0,-(a7)
+					movea.l			a0,a1
+					move.b			#0,-(a7)
+\pre_loop			tst.b			d0
+					beq				\loop
+
+					divu.w			#10,d0			
+					swap.w			d0
+					move.b			d0,-(a7)
+					add.b			#'0',(a7)
+					swap.w			d0
+					andi.l			#$0000FFFF,d0
+					bra				\pre_loop
+
+\loop				move.b			(a7)+,(a0)+
+					beq				\quit
+					bra				\loop
+
+\quit				movea.l			a1,a0
+					movem.l			(a7)+,d0/a1/a0
+					rts
+
 GetExpr			movem.l		a0/a1/a2/d1/d2,-(a7)
 				jsr			GetNum
 				move.l		d0,d1
@@ -190,7 +263,10 @@ Atoui			movem.l		a0/d1,-(a7)
 				movea.l		a2,a0
 				rts
 
+sBuffer 		ds.b 		60
 E				dc.b		"32767",0
 SN				dc.b		"Erreur",0
 S				dc.b		"104+9*2-3",0
 S1				dc.b		"104+2+5-113/0",0
+P1				dc.b		"Veuillez saisir une expression :",0
+P2				dc.b		"Resultat :",0

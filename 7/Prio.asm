@@ -3,10 +3,10 @@ vector_001		dc.l			Main
 				org 			$550
 				
 Main			movea.l			#S1,a0
-				jsr				GetExpr
+				jsr				Prio
 				illegal
 				
-GetExpr			movem.l		a0/a1/a2/d1/d2,-(a7)
+Prio			movem.l		a0/a1/a2/d1/d2,-(a7)
 				jsr			GetNum
 				move.l		d0,d1
 				move.b		(a0)+,d2
@@ -194,3 +194,4 @@ E				dc.b		"32767",0
 SN				dc.b		"Erreur",0
 S				dc.b		"104+9*2-3",0
 S1				dc.b		"104+2+5-113/0",0
+
