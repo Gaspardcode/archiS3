@@ -3,10 +3,13 @@ vector_001		dc.l			Main
 				org 			$550
 				
 Main			movea.l			#S1,a0
-				jsr				Prio
+				jsr				GetExpr
 				illegal
 				
-Prio			movem.l		a0/a1/a2/d1/d2,-(a7)
+				
+Prio
+
+GetExpr			movem.l		a0/a1/a2/d1/d2,-(a7)
 				jsr			GetNum
 				move.l		d0,d1
 				move.b		(a0)+,d2
@@ -27,6 +30,9 @@ Prio			movem.l		a0/a1/a2/d1/d2,-(a7)
 				
 				cmpi 		#'/',d2
 				beq 		\divide
+				
+	;			cmpi		#')',d2
+	;			beq			\parent
 				
 				bra			\quit
 
@@ -52,6 +58,10 @@ Prio			movem.l		a0/a1/a2/d1/d2,-(a7)
 				move.b		(a0)+,d2
 				beq			\quit
 				bra			\loop
+				
+\parent			;skips parenthesis
+				tst.b		(a0)+	
+				bra			\quit
 				
 \error			movem.l 	(a7)+,a0/a1/a2/d1/d2
 				andi.b 		#%11111011,ccr
